@@ -1,0 +1,42 @@
+#...............Importing important functionalities...................
+from telegram.ext.updater import Updater
+from telegram.update import Update
+from telegram.user import User
+from telegram.ext.callbackcontext import CallbackContext
+from telegram.ext.commandhandler import CommandHandler
+from telegram.ext.messagehandler import MessageHandler
+from telegram.ext.filters import Filters
+import movie_rating
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('\')
+           def hello_word():
+               print
+
+updater = Updater(token = "5464528533:AAEdqNZaOwiNUot5-4ng6K1c0-YnuRHelhQ", use_context = True)
+
+def start(update: Update, context: CallbackContext):
+    user = update.message.from_user
+    update.message.reply_text(
+        "Welcome !.."+user['first_name']+' '+user['last_name']+"\nThank you for visiting me."+"\nI am a telegram bot."+
+        "\nyou just send me the name of movie, webseries or TV Series and I Can give you the ratings and other details about the same. Thus you can decide whether "+
+        "it is worth of watching or not..")
+
+def messageReply(update: Update, context: CallbackContext):
+    re_dict = movie_rating.movieRating(update.message['text'])
+    reslt = '\n'
+    for ky in re_dict.keys():
+        if ky == 'ygd':
+            reslt += re_dict[ky] + '\n\n'
+        else:   
+            reslt += ky + ' : ' + re_dict[ky] + '\n\n'
+
+    update.message.reply_text(reslt)
+   
+
+updater.dispatcher.add_handler(CommandHandler('start', start))
+updater.dispatcher.add_handler(MessageHandler(Filters.text, messageReply))
+
+updater.start_polling()
