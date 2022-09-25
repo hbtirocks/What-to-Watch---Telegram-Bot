@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+
+<html>
+	<head> 
+		<title>New Line in String</title>
+		
+		<style>
+		body{background-color:#6F2DA8;
+			font-family:"Bookman Old Style";
+			color:white;}
+		input.txt{background-color:#6F2DA8;
+			font-family:"Bookman Old Style";
+			color:white;
+			border:1px solid white;}
+		input.file, input.button{
+					font-family:"Bookman Old Style";
+					color:white;}
+		input.button{background-color:#283747;}
+		input:focus {outline:none;}
+		</style>
+	</head>
+	
+
+
+	<body>
+  		<div style = "border:1px solid white; -webkit-border-radius:5%;width:500px;height:300px;" id = "form-control">
+			<h2 align="center">Text Modifier </h2>
+  			<form method="POST" action="/new_line_string" enctype="multipart/form-data">
+				<table border="0" align="center" cellpadding="5">
+      					<tbody>
+      						<tr><td><b>New Line Character :&nbsp;&nbsp;</b></td><td><input type="text" name="txt_char" class = "txt" value = "; , : etc." onmouseup = "checkInput(this)"></td></tr>
+						<tr><td><b>Add Text :&nbsp;&nbsp;</b></td><td><input type="text" name="txt_str" class = "txt" value = "Enter the text" onmouseup = "checkInput(this)"></td></tr>
+						<tr><td colspan = 2 style = "text-align:center;">OR</td></tr>
+						<tr><td><b>Add Text File :&nbsp;&nbsp;</b></td><td><input type="file" name="txt_file" class = "file" accept="txt/*"></td></tr>
+						<tr><td></td></tr>
+						<tr><td></td><td><input type="submit" name="Submit" value="SUBMIT" class = "button"></td></tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+		<script type = "text/javascript">
+		var div = document.getElementById("form-control");
+		div.style.marginTop = (window.innerHeight-300)/2+'px';
+		div.style.marginLeft = (window.innerWidth-500)/2+'px';
+		
+		function checkInput(el){
+			el.value = '';
+		}
+		</script>
+	</body>
+</html>
