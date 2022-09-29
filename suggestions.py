@@ -23,8 +23,7 @@ def movie_scrapper(search, movie_db):
             calling = 0
             return 0
         else:
-            functn = globals()[movie_db+"_db"]
-            print(functn(search, res))
+            print(globals()[movie_db+"_db"](search, res))
             calling = 1
 
 def cinematerial_db(search, res):
