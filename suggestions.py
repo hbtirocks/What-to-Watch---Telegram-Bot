@@ -10,7 +10,7 @@ def movie_scrapper(search, movie_db):
         header['path'] = header['path'].format(search)
         url = url.format(search)
     elif header["method"] == "POST":
-        search_term = {"search_term":search}
+        search_term = {"search_term":search, "image_size":"98", "search_each":"true"}
         url = url
 
     if header.get("content-length") != None:
@@ -70,7 +70,23 @@ def imdb_db(search, res):
     print(otpt)
 
 def metacritic_db(search, res):
-    print(res)
+    otpt = []
+    search = search.split(' ')
+    data = res["autoComplete"]["results"]
+    for i in range(len(data)):
+        if data[i]["refType"] == "Movie" or data[i]["refType"] == "Tv":
+            for j in range(len(search)):
+                if data[i]['name'].lower().find(search[j]) != -1:
+                    otpt.append({'name':data[i].get('name'), 'catgry':data[i].get('refType'), 'poster':data[i].get('imagePath'), 'year':data[i].get('itemDate'),
+                                 'Metacritic':data[i].get('metaScore')})
+                    break
+    if len(otpt) == 0:
+        for i in range(len(res)):
+            if data[i]["refType"] == "Movie" or data[i]["refType"] == "Tv":
+                otpt.append({'name':data[i].get('l'), 'catgry':data[i].get('qid'), 'poster':data[i].get('imageUrl'), 'year':data[i].get('y')})
+                if len(otpt) == 4:
+                    break
+    print(otpt)
 
 
 movie_db = ['metacritic']
