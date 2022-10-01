@@ -6,11 +6,21 @@ def movie_scrapper(search, movie_db):
     config_json = json.load(config)
     header = config_json[movie_db]["header"]
     url = config_json[movie_db]["url"]
-    header['path'] = header['path'].format(search)
-    url = url.format(search)
+    if header["method"] == "GET":
+        header['path'] = header['path'].format(search)
+        url = url.format(search)
+    elif header["method"] == "POST":
+        search_term = {"search_term":search}
+        url = url
+
+    if header.get("content-length") != None:
+        header["content-length"] = format(header["content-length"], str(43+len(search)))
 
     try:
-        req = requests.get(url = url, headers = header)
+        if header["method"] == "GET":
+            req = requests.get(url = url, headers = header)
+        elif header["method"] == "POST":
+            req = requests.post(url = url, data = search_term, headers = header)
     except:
         print("Error in loading data..")
         calling = 0
@@ -19,11 +29,11 @@ def movie_scrapper(search, movie_db):
     if req.status_code == 200:
         res = json.loads(req.content)
         if len(res) == 0:
-            print("No matching result at {0} ", movie_db)
+            print(format("No matching result at {0} ", movie_db))
             calling = 0
             return 0
         else:
-            print(globals()[movie_db+"_db"](search, res))
+            globals()[movie_db+"_db"](search, res)
             calling = 1
 
 def cinematerial_db(search, res):
@@ -59,8 +69,11 @@ def imdb_db(search, res):
                 break
     print(otpt)
 
+def metacritic_db(search, res):
+    print(res)
 
-movie_db = ['imdb']
+
+movie_db = ['metacritic']
 
 for i in range(len(movie_db)):
     movie_scrapper(input('Enter the movie name :-').strip().lower(), movie_db[i])
