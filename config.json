@@ -41,5 +41,35 @@
 		"user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Mobile Safari/537.36"
 		},
 	"url": "https://v3.sg.media-imdb.com/suggestion/titles/x/{0}.json?includeVideos=1"
-	}
+	},
+
+"rottentomatoes":{
+
+		},
+
+"metacritic":{
+		"header":{
+			"authority": "www.metacritic.com",
+			"method": "POST",
+			"path": "/autosearch",
+			"scheme": "https",
+			"accept": "*/*",
+			"accept-encoding": "gzip, deflate, br",
+			"accept-language": "en-US,en;q=0.9",
+			"content-length": "{0}",
+			"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+			"cookie": "mc_s_s=b_3; _BB.bs=d|4; _cb=BfpbqGBJYTvQW1tGA; _cb_svref=https%3A%2F%2Fwww.google.com%2F; __utma=15671338.217774418.1664585046.1664585046.1664585046.1; __utmc=15671338; __utmz=15671338.1664585046.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __utmt=1; chsn_cnsnt=www.metacritic.com%3AC0001%2CC0002%2CC0003%2CC0004; tglr_anon_id=1ef6662f-73c3-4100-bfe1-f9e51766f1dd; tglr_sess_id=4d008e46-d282-4073-9b77-9672a9aae784; tglr_ref=https://www.google.com/; tglr_req=https://www.metacritic.com/; tglr_sess_count=1; tglr_tenant_id=src_1kZD6ZLXVCIj0d2XTZb7WONLbaA; AMCVS_3C66570E5FE1A4AB0A495FFC%40AdobeOrg=1; s_ecid=MCMID%7C09212974823550545032665249650512860912; s_cc=true; AMCV_3C66570E5FE1A4AB0A495FFC%40AdobeOrg=1585540135%7CMCIDTS%7C19267%7CMCMID%7C09212974823550545032665249650512860912%7CMCAAMLH-1665189846%7C12%7CMCAAMB-1665189846%7CRKhpRz8krg2tLO6pguXWp5olkAcUniQYPHaMWWgdJ3xzPWQmdj0y%7CMCOPTOUT-1664592247s%7CNONE%7CMCAID%7CNONE%7CvVersion%7C4.4.0; aam_uuid=0444183919952150719398979064775144; __gads=ID=921e82a09d0cb7d7:T=1664585006:S=ALNI_MblAONKoVlUWG_6vFs4WFjUQ3BcpQ; __gpi=UID=00000a14fbf007a6:T=1664585006:RT=1664585006:S=ALNI_MZKAZxS1mkfgwXeAnFFxn7wcXABuw; cohsn_xs_id=fdf9b82c-5242-43fb-ba7c-fdf63ca71975; ctk=NjMzNzhkMzIzYjVmMzJjYmU2NGE3ODJhM2ExOA%3D%3D; omniEvents[pageFindingMethod]=Internal:Search; OptanonConsent=isIABGlobal=false&datestamp=Sat+Oct+01+2022+06%3A14%3A31+GMT%2B0530+(India+Standard+Time)&version=6.20.0&hosts=&consentId=272aa361-153f-4795-b0e6-d20944e96770&interactionCount=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&AwaitingReconsent=false&geolocation=IN%3BMP; OptanonAlertBoxClosed=2022-10-01T00:44:31.331Z; metapv=2; _BB.d=|||2; _chartbeat2=.1664585045863.1664585071631.1.B3oN7WDC06OWo2PugB8_9hvD8SlZ0.3; __utmb=15671338.4.9.1664585058677; prevPageType=front_door; _pbjs_userid_consent_data=3524755945110770; _pubcid=6d13cd74-e928-4386-a780-f6195ab434a8; cto_bundle=v_kCF19WVzRzJTJCZjlJRlp5NWdzNGJaNzNOeEpqMXdnJTJCYWJaZmhsbUVpOERIY0wTFFZMzklMkJEMjlEQ0RBM0pWZlFKTE8lMkZYQjFWVUY5JTJCODVpc3hLUmNJMk5hOEFJbENMaDd6MkJXQzlaUmpIa0dmQVljQTRMVnBHa2xFbmw5ejVMVk82TGJFelNQMSUyQmZ1U3l6JTJCVFQlMkI3V0FlMHRnJTNEJTNE; utag_main=v_id:01839100198500231d05d5be6cc80506a001b0620086e$_sn:1$_ss:0$_pn:3%3Bexp-session$_st:1664586872758$ses_id:1664585046405%3Bexp-session$vapi_domain:metacritic.com; _BB.enr=aud_2F92r1I0z6Zy7W5tbUxfmICFf2W%2Caud_2FMW8YnEY05QgQeXrfi5uvz9pkH; RT=\"z=1&dm=metacritic.com&si=3b322642-5993-4183-9244-3cf7cd606003&ss=l8p6yesp&sl=3&tt=7zo&bcn=%2F%2F684d0d41.akstat.io%2F&ld=plj\"",
+			"origin": "https://www.metacritic.com",
+			"referer": "https://www.metacritic.com/",
+			"sec-ch-ua": "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\"",
+			"sec-ch-ua-mobile": "?1",
+			"sec-ch-ua-platform": "\"Android\"",
+			"sec-fetch-dest": "empty",
+			"sec-fetch-mode": "cors",
+			"sec-fetch-site": "same-origin",
+			"user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Mobile Safari/537.36",
+			"x-requested-with": "XMLHttpRequest"
+			},
+		"url":"https://www.metacritic.com/autosearch"
+		}
 }
