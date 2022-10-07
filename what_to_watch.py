@@ -6,7 +6,10 @@ from telegram.ext.callbackcontext import CallbackContext
 from telegram.ext.commandhandler import CommandHandler
 from telegram.ext.messagehandler import MessageHandler
 from telegram.ext.filters import Filters
+from telegram.keyboardbutton import KeyboardButton
+from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 import movie_rating
+import suggestions
 from flask import Flask, request, render_template, send_file, send_from_directory
 from flask_ngrok import run_with_ngrok
 import requests
@@ -36,7 +39,15 @@ def set_bot():
                 "it is worth of watching or not..")
 
         def message_reply(update: Update, context: CallbackContext):
-            re_dict = movie_rating.movieRating(update.message.text)
+            suggest = suggestions.movie_scrapper(update.message.text, 'cinematerial')
+            buttons = []
+            for i in range(len(suggest)):
+                buttons.append([KeyboardButton(suggest[i]['name']+'/'+str(suggest[i]['year']), request_contact = True, request_location = True)])
+                
+            buttons = ReplyKeyboardMarkup(buttons)
+            update.message.reply_text(text = 'Hi', reply_markup = buttons)
+
+            """re_dict = movie_rating.movieRating(update.message.text)
             reslt = '\n'
             for ky in re_dict.keys():
                     if ky == 'ygd':
@@ -48,7 +59,7 @@ def set_bot():
                     return 1
             update.message.reply_text("Could not find the exact match !\n"+
                                       "Try adding 'movie', 'webseries' etc. in your search..\n"+
-                                      "Ex. 'Gravity movie' or 'Vikings webseries' ")    
+                                      "Ex. 'Gravity movie' or 'Vikings webseries' ")"""    
                 
                 
            
@@ -88,30 +99,6 @@ def handle_webhook():
         update = Update.de_json(request.get_json(force=True), updater.bot)
         updater.dispatcher.process_update(update)
         return "Hello World !"
-
-@app.route("/new_line_string", methods=["GET", "POST"])
-def new_line_str():
-    if request.method == 'POST':
-        char = request.form.get('txt_char')
-        char = char.strip().split(' ')
-        txt = request.form.get('txt_str').strip()
-        if len(txt) != 0:
-            for i in range(len(char)):
-                txt = txt.replace(char[i], char[i]+'\n')
-            new_file = open('xyz.txt', 'wt')
-            new_file.write(txt)
-            new_file.close()
-        upload_file = request.files['txt_file']
-        if upload_file.filename.lower().endswith('.txt'):
-            txt = upload_file.read()
-            txt = str(txt, 'utf-8-sig')
-            for i in range(len(char)):
-                txt = txt.replace(char[i], char[i]+'\n')
-            print(txt)
-            new_file = open('xyz.txt', 'at', errors = "ignore")
-            new_file.write(txt)
-            new_file.close()
-            upload_file.close()
             
     return render_template("new_line_string.html")
     
