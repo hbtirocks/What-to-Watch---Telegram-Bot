@@ -6,8 +6,8 @@ from telegram.ext.callbackcontext import CallbackContext
 from telegram.ext.commandhandler import CommandHandler
 from telegram.ext.messagehandler import MessageHandler
 from telegram.ext.filters import Filters
-from telegram.keyboardbutton import KeyboardButton
-from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
+from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
+from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 import movie_rating
 import suggestions
 from flask import Flask, request, render_template, send_file, send_from_directory
@@ -34,18 +34,25 @@ def set_bot():
             if user.last_name != None:
                 full_name += ' '+user.last_name
             update.message.reply_text(
-                "Welcome !.."+full_name+"\nThank you for visiting me."+"\nI am a telegram bot."+
-                "\nyou just send me the name of movie, webseries or TV Series and I Can give you the ratings and other details about the same. Thus you can decide whether "+
-                "it is worth of watching or not..")
+                "<b><i>Welcome  ‼..</i></b><u>"+full_name+"</u>\n<i>Thank you for visiting me..🙏</i>"+"\n<i>I am a telegram bot..🤖</i>\n"+
+                "\n<b><i>Things I can do for you:-</i></b>\n"+
+                "\n1. <i>you just send me the name of movie  🎬, webseries  🎞 or TV Series  📺 and I Can give you the ratings  🎖 and other details  📝 about the same. Thus you can decide whether </i>"+
+                "<i>it is worth of watching  🕶 or not..</i>\n"+
+                "\n<b>Additional features - soon to be added..‼</b>", parse_mode = 'html')
 
         def message_reply(update: Update, context: CallbackContext):
-            suggest = suggestions.movie_scrapper(update.message.text, 'cinematerial')
-            buttons = []
+            temp_message = update.message.reply_text('🆂🅴🅰🆁🅲🅷🅸🅽🅶...🔎')
+            suggest = suggestions.movie_scrapper(update.message.text)
+            txt = ''
+            option = []
             for i in range(len(suggest)):
-                buttons.append([KeyboardButton(suggest[i]['name']+'/'+str(suggest[i]['year']), request_contact = True, request_location = True)])
+                txt += '<i>\n{0}. {1}\n  Year:-{2}\n  Category:-{3}\n</i>'.format(i+1, suggest[i]['name'], suggest[i]['year'], suggest[i]['catgry'])
+                option.append(InlineKeyboardButton(text = i+1, callback_data = i+1))
+            txt += '<i>\n#. None of the above\n\n</i><b><i>Choose your option and press the button below..</i></b>'
+            option.append(InlineKeyboardButton(text = '#', callback_data = '#'))
                 
-            buttons = ReplyKeyboardMarkup(buttons)
-            update.message.reply_text(text = 'Hi', reply_markup = buttons)
+            temp_message.delete()
+            update.message.reply_text('<b><i>Results matching your search...</i></b>\n'+txt, reply_markup = InlineKeyboardMarkup([option]), parse_mode = 'html')
 
             """re_dict = movie_rating.movieRating(update.message.text)
             reslt = '\n'

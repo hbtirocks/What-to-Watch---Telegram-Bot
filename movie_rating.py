@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
-from torpy.http.requests import TorRequests
 
 def movieRating(search):
     #...............Code for generating search url from input.............
@@ -14,11 +13,6 @@ def movieRating(search):
                'connection' : 'keep-alive'}
     
     req = requests.get(url = url, headers = headers)
-
-    """with TorRequests() as tor_requests:
-        with tor_requests.get_session() as session:
-            global req
-            req = session.get(url)"""
 
     soup = BeautifulSoup(req.content, 'html5lib')
     print(soup)

@@ -95,5 +95,5 @@
          "search_each":"true"
       }
    },
- "movie_db": "['cinematerial', 'imdb', 'metacritic']"
+ "movie_db": ["imdb", "cinematerial", "metacritic"]
 }
