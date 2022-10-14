@@ -23,7 +23,6 @@ def create(db_name, typ, tbl_name = '', *data):
             cursr.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';")
             rows = cursr.fetchall()
             for row in rows:
-                print(row)
                 if row[0] == tbl_name:
                     print('Table {0} already existed in {1} database'.format(tbl_name, db_name))
                     return 0
@@ -54,7 +53,7 @@ def write_table(db_name, tbl_name, qry, **data):
     #**data format
     #for qry type 'INSERT'
     #values = [(a,b,c,d) ,(p,q,r,s), (_,_,_,_)]
-    #for qry type 'UPDATE' & 'SELECT'
+    #for qry type 'UPDATE'
     #update = [col1, col2, col3], where = [col4, 'and/or..', col5], values = [(a,b,c,d,e) ,(p,q,r,s,t), (_,_,_,_,_)]
     #for qry type 'DELETE'
     #where = [col4, 'and/or..', col5], values = [(a,b) ,(p,q), (_,_)]
@@ -75,7 +74,7 @@ def write_table(db_name, tbl_name, qry, **data):
         for row in rows:
             if row[0] == tbl_name:
                 if qry.upper() == 'INSERT':
-                    cursr.execute("SELECT COUNT(*) FROM information_schema.columns WHERE table_name = '{0}'".format(tbl_name))
+                    cursr.execute("SELECT COUNT(*) FROM pragma_table_info('{0}');".format(tbl_name))
                     col = cursr.fetchall()
                     col = col[0][0]
                     qry = "INSERT INTO {0} VALUES(".format(tbl_name)
@@ -83,7 +82,7 @@ def write_table(db_name, tbl_name, qry, **data):
                         qry += "?, "
                     qry += "?);"
                     cursr.executemany(qry, data['values'])
-                    print("Data Inserted :- ", cursr.fetchall())
+                    print("Data in {0} inserted successfully!".format(tbl_name))
                     conctn.commit()
                     #Python supports manual commit by default., Means any change like
                     #INSERT, UPDATE, DELETE etc. will reflect only after commiting
@@ -92,37 +91,44 @@ def write_table(db_name, tbl_name, qry, **data):
                     qry = "UPDATE {0} SET ".format(tbl_name)
                     for i in range(len(data['update'])-1):
                         qry += "{0} = ?, ".format(data['update'][i])
-                    qry += "{0} = ? WHERE ".format(data['update'][len(data['update'])-1])
+                    qry += "{0} = ?".format(data['update'][len(data['update'])-1])
 
-                    for i in range(stop=len(data['where'])-1, step=2):
-                        qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
-                    qry += "{0} = ?;".format(data['where'][len(data['where'])-1])
-
-                    cursr.executemany(qry, data['values'])
-                    print("Data Updated :- ", cursr.fetchall())
+                    if data.get('where'):
+                        qry += " WHERE "
+                        for i in range(0, len(data['where'])-1, 2):
+                            qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
+                        qry += "{0} = ?".format(data['where'][len(data['where'])-1])
+                        
+                    qry += ";"
+                    
+                    if data.get('where'):
+                        cursr.executemany(qry, data['values'])
+                    else:
+                        cursr.execute(qry)
+                        
+                    print("Data in {0} updated successfully!".format(tbl_name))
                     conctn.commit()
                 elif qry.upper() == 'DELETE':
-                    qry = "DELETE FROM {0} ".format(tbl_name)
-                    for i in range(stop=len(data['where'])-1, step=2):
-                        qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
-                    qry += "{0} = ?;".format(data['where'][len(data['where'])-1])
+                    qry = "DELETE FROM {0}".format(tbl_name)
 
-                    cursr.executemany(qry, data['values'])
-                    print("Data Deleted :- ", cursr.fetchall())
-                    conctn.commit()
-                elif qry.upper() == 'SELECT':
-                    qry = "SELECT "
-                    for i in range(len(data['select'])-1):
-                        qry += "{0}, ".format(data['select'][i])
-                    qry += "{0} FROM {1} WHERE ".format(data['select'][len(data['select'])-1], tbl_name)
-                    for i in range(stop=len(data['where'])-1, step=2):
-                        qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
-                    qry += "{0} = ?;".format(data['where'][len(data['where'])-1])
-
-                    cursr.executemany(qry, data['values'])
-                    print("Data fetched :- ", cursr.fetchall())
-                    return cursr.fetchall()     
+                    if data.get('where'):
+                        qry += " WHERE "
+                        for i in range(len(0, data['where'])-1, 2):
+                            qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
+                        qry += "{0} = ?".format(data['where'][len(data['where'])-1])
+                        
+                    qry += ";"
+                    
+                    if data.get('where'):
+                        cursr.executemany(qry, data['values'])
+                    else:
+                        cursr.execute(qry)
+                        
+                    print("Data from {0} deleted successfully!".format(tbl_name))
+                    conctn.commit()   
                 break
+            else:
+                print("Table {0} do not exist in {1}".format(db_name, tbl_name))
     except Error as e:
         print(e)
     finally:
@@ -132,6 +138,28 @@ def write_table(db_name, tbl_name, qry, **data):
             #finally closing the connection to db.
             print('Connection to database is closed')
 
+def read_table(db_name, tbl_name, **data):
+    conctn = None
+    try:
+        #Checking if database already exists
+        if os.path.isfile("database/"+db_name):
+            conctn = db.connect("database\\"+db_name)
+        else:
+            print("sorry ! {0} do not exist".format(db_name))
+            return 0
+        
+        cursr = conctn.cursor()
+        #Creates a cursor object with alreday established connection to db
+
+        cursr.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';")
+        rows = cursr.fetchall()
+        for row in rows:
+            if row[0] == tbl_name:
+                qry = "SELECT "
+                for i in range(len(data['select']-1):
+                               
+
 #write_table('movie_info.db', 'chat_info', 'INSERT', values = [(689357, 610, 1, 'Dil Bechara', 2021, 'movie', 'imdb.com/xyz.jpg')])
-create("master_info.db", "db", "db_info", "name TEXT NOT NULL")
+#create("master_info.db", "table", "db_info", "name TEXT NOT NULL")
+
 
