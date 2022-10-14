@@ -22,6 +22,7 @@ import time
 import threading
 import os
 import codecs
+import manage_db as db
 
 logging.basicConfig(level = logging.DEBUG)
 bot_token = "5464528533:AAEdqNZaOwiNUot5-4ng6K1c0-YnuRHelhQ"
@@ -45,6 +46,7 @@ def set_bot():
 
         def get_suggestions(update: Update, context: CallbackContext):
             temp_message = update.message.reply_text('🆂🅴🅰🆁🅲🅷🅸🅽🅶...🔎')
+            chat_id = temp_message.chat.id
             suggest = suggestions.movie_scrapper(update.message.text)
             txt = ''
             option = []
@@ -54,8 +56,14 @@ def set_bot():
             txt += '<i>\nNone of the results matching your search..\nTry again with more precise words..\n\n</i><b><i>Choose your option and press the button below..</i></b>'
                 
             temp_message.delete()
-            x = update.message.reply_text('<b><i>Results matching your search...</i></b>\n'+txt, reply_markup = InlineKeyboardMarkup([option]), parse_mode = 'html')
-            print(x.message_id)
+            sent_msg = update.message.reply_text('<b><i>Results matching your search...</i></b>\n'+txt, reply_markup = InlineKeyboardMarkup([option]), parse_mode = 'html')
+
+            #Updating database
+            values = []#values to be passed to database
+            for i in range(len(suggest)):
+                values.append((sent_msg.chat.id, sent_msg.message_id, i, suggest[i]['name'], suggest[i]['year'], suggest[i]['catgry'], suggest[i]['poster']))
+            db.write_table('movie_info.db', 'chat_info', 'INSERT', values = values)
+            
 
         def keyboard_query(update: Update, context: CallbackContext):
             qry = update.callback_query
