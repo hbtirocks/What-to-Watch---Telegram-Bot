@@ -113,11 +113,12 @@ def write_table(db_name, tbl_name, qry, **data):
 
                     if data.get('where'):
                         qry += " WHERE "
-                        for i in range(len(0, data['where'])-1, 2):
+                        for i in range(0, len(data['where'])-1, 2):
                             qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
                         qry += "{0} = ?".format(data['where'][len(data['where'])-1])
                         
                     qry += ";"
+                    print(qry)
                     
                     if data.get('where'):
                         cursr.executemany(qry, data['values'])
@@ -140,6 +141,7 @@ def write_table(db_name, tbl_name, qry, **data):
 
 def read_table(db_name, tbl_name, **data):
     conctn = None
+    rows = None
     try:
         #Checking if database already exists
         if os.path.isfile("database/"+db_name):
@@ -156,10 +158,39 @@ def read_table(db_name, tbl_name, **data):
         for row in rows:
             if row[0] == tbl_name:
                 qry = "SELECT "
-                for i in range(len(data['select']-1):
-                               
+                for i in range(len(data['select'])-1):
+                    qry += "{0}, ".format(data['select'][i])
+                qry += "{0}".format(data['select'][len(data['select'])-1])
 
-#write_table('movie_info.db', 'chat_info', 'INSERT', values = [(689357, 610, 1, 'Dil Bechara', 2021, 'movie', 'imdb.com/xyz.jpg')])
-#create("master_info.db", "table", "db_info", "name TEXT NOT NULL")
+                qry += " FROM {0}".format(tbl_name)
+                
+                if data.get('where'):
+                    qry += " WHERE "
+                    for i in range(0, len(data['where'])-1, 2):
+                        qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
+                    qry += "{0} = ?".format(data['where'][len(data['where'])-1])
 
+                qry += ";"
+
+                if data.get('where'):
+                    cursr.execute(qry, data['values'])
+                else:
+                    cursr.execute(qry)
+                rows = cursr.fetchall()
+                break
+            else:
+                print("Table {0} do not exist in {1}".format(db_name, tbl_name))
+    except Error as e:
+        print(e)
+    finally:
+        if conctn:
+            cursr.close()
+            conctn.close()
+            #finally closing the connection to db.
+            print('Connection to database is closed')
+            return rows
+                
+                            
+#Table :- movie_info
+#columns :- chat_id (INT), message_id (INT), id (INT), name (TEXT), year (TEXT), category(Text), poster(Text)
 
