@@ -96,7 +96,7 @@ def write_table(db_name, tbl_name, qry, **data):
                     if data.get('where'):
                         qry += " WHERE "
                         for i in range(0, len(data['where'])-1, 2):
-                            qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
+                            qry += "{0} = ? {1} ".format(data['where'][i], data['where'][i+1])
                         qry += "{0} = ?".format(data['where'][len(data['where'])-1])
                         
                     qry += ";"
@@ -114,11 +114,10 @@ def write_table(db_name, tbl_name, qry, **data):
                     if data.get('where'):
                         qry += " WHERE "
                         for i in range(0, len(data['where'])-1, 2):
-                            qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
+                            qry += "{0} = ? {1} ".format(data['where'][i], data['where'][i+1])
                         qry += "{0} = ?".format(data['where'][len(data['where'])-1])
                         
                     qry += ";"
-                    print(qry)
                     
                     if data.get('where'):
                         cursr.executemany(qry, data['values'])
@@ -167,7 +166,7 @@ def read_table(db_name, tbl_name, **data):
                 if data.get('where'):
                     qry += " WHERE "
                     for i in range(0, len(data['where'])-1, 2):
-                        qry += "{0} = ? {1}".format(data['where'][i], data['where'][i+1])
+                        qry += "{0} = ? {1} ".format(data['where'][i], data['where'][i+1])
                     qry += "{0} = ?".format(data['where'][len(data['where'])-1])
 
                 qry += ";"
@@ -193,4 +192,5 @@ def read_table(db_name, tbl_name, **data):
                             
 #Table :- movie_info
 #columns :- chat_id (INT), message_id (INT), id (INT), name (TEXT), year (TEXT), category(Text), poster(Text)
+print(read_table('movie_info.db', 'chat_info', select=['*']))
 
