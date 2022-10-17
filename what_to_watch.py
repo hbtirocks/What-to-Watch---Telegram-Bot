@@ -45,8 +45,7 @@ def set_bot():
                 "\n<b>Additional features - soon to be added..‼</b>", parse_mode = 'html')
 
         def get_suggestions(update: Update, context: CallbackContext):
-            temp_message = update.message.reply_text('🆂🅴🅰🆁🅲🅷🅸🅽🅶...🔎')
-            chat_id = temp_message.chat.id
+            temp_msg = update.message.reply_text('🆂🅴🅰🆁🅲🅷🅸🅽🅶...🔎')
             suggest = suggestions.movie_scrapper(update.message.text)
             txt = ''
             option = []
@@ -55,7 +54,7 @@ def set_bot():
                 option.append(InlineKeyboardButton(text = i+1, callback_data = i))
             txt += '<i>\nNone of the results matching your search..\nTry again with more precise words..\n\n</i><b><i>Choose your option and press the button below..</i></b>'
                 
-            temp_message.delete()
+            temp_msg.delete()
             sent_msg = update.message.reply_text('<b><i>Results matching your search...</i></b>\n'+txt, reply_markup = InlineKeyboardMarkup([option]), parse_mode = 'html')
 
             #Updating database
@@ -67,23 +66,32 @@ def set_bot():
 
         def keyboard_query(update: Update, context: CallbackContext):
             qry = update.callback_query
-            updater.bot.delete_message(qry.message.chat.id, qry.message.message_id)
-    
-            """hint = update.callback_query.data.split('+')
-            print(hint)
-            re_dict = movie_rating.movieRating('{0} {1}'.format(hint[0], hint[1]))
-            reslt = '\n'
-            for ky in re_dict.keys():
-                    if ky == 'ygd':
-                        reslt += re_dict[ky] + '\n\n'
-                    else:   
-                        reslt += ky + ' : ' + re_dict[ky] + '\n\n'
-            if len(re_dict) != 0:
-                    update.message.reply_text(reslt)
-                    return 1
-            update.message.reply_text("Could not find the exact match !\n"+
-                                      "Try adding 'movie', 'webseries' etc. in your search..\n"+
-                                      "Ex. 'Gravity movie' or 'Vikings webseries' ")"""
+            temp_msg = qry.message.reply_text("🅵🅴🆃🅲🅷🅸🅽🅶 🅸🅽🅵🅾...ℹ")
+            slctd_mv = db.read_table('movie_info.db', 'chat_info', select = ['name', 'year', 'category', 'poster'],
+                                 where = ['chat_id', 'and', 'message_id', 'and', 'id'], values = (qry.message.chat.id, qry.message.message_id, qry.data))
+            #slctd_mv :- selected movie by telegram user.
+            
+            if len(slctd_mv):
+                re_dict = movie_rating.movie_overview('{0} {1}'.format(slctd_mv[0][0], slctd_mv[0][1]))
+                reslt = '\n'
+                print(re_dict)
+                for ky in re_dict.keys():
+                        if ky == 'ygd' or ky == 'ratings':
+                            reslt += '<i>{0}\n</i>'.format(re_dict[ky])
+                        else:
+                            if ky == 'Title':
+                                re_dict[ky] = '<b>{0}</b>'.format(re_dict[ky])
+                            reslt += '<i>{0} : {1}\n\n</i>'.format(ky, re_dict[ky])
+                if len(re_dict) != 0:
+                        updater.bot.delete_message(qry.message.chat.id, qry.message.message_id)
+                        temp_msg.delete()
+                        qry.message.reply_text(reslt, parse_mode = 'html')
+                        db.write_table('movie_info.db', 'chat_info', 'DELETE', where = ['chat_id', 'and', 'message_id'], values = [(qry.message.chat.id, qry.message.message_id)])
+                        return 1
+                qry.message.reply_text("Could not find the exact match !\n"+
+                                          "Try adding 'movie', 'webseries' etc. in your search..\n"+
+                                          "Ex. 'Gravity movie' or 'Vikings webseries' ")
+                
                 
         updater.dispatcher.add_handler(CommandHandler('start', start))
         updater.dispatcher.add_handler(MessageHandler(Filters.text, get_suggestions))

@@ -2,20 +2,19 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+import json
 
-def movieRating(search):
+def movie_overview(search):
     #...............Code for generating search url from input.............
     search = search.strip().replace(' ', '+')
-
-    #..............Code for fetching Title.................................
     url = 'https://www.google.com/search?q=' + search + '&oq=' + search
-    headers = {'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Mobile Safari/537.36',
+    header = {'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Mobile Safari/537.36',
                'connection' : 'keep-alive'}
-    
-    req = requests.get(url = url, headers = headers)
 
+    
+    #..............Code for fetching Title.................................
+    req = requests.get(url = url, headers = header)
     soup = BeautifulSoup(req.content, 'html5lib')
-    print(soup)
     movie = {}
     title = ''
 
@@ -38,7 +37,7 @@ def movieRating(search):
 
     if div != None:
             lst = div.find_all('span')
-            movie['ygd'] = lst[len(lst)-1].text
+            movie['ygd'] = lst[len(lst)-1].text+'\n'
             #ygd- Year Genre Duration
 
     #..............Code for fetching type of show [i.e. Movie or Web Show]........................
@@ -55,8 +54,8 @@ def movieRating(search):
                     
     #..............Code for fetching ratings......................................................
     rating_sign = {'IMDb':'🏅', 'Rotten Tomatoes':'🍅', 'Metacritic':'🏆', 'Google users':'👍', 'defalt':'🎖'}
-
     class_list = ['zr7Aae', 'uR5eBd']
+    ratings = ''
 
     for cls in class_list:
         div = soup.find('div', class_ = cls)
@@ -69,9 +68,9 @@ def movieRating(search):
             
             for i in range(len(rating_typ)):
                     if rating_sign.get(rating_typ[i].text) != None:
-                            movie[rating_typ[i].text] = rating_val[i].text+' '+rating_sign[rating_typ[i].text]
+                            ratings += '{0} : {1} {2}\n'.format(rating_typ[i].text, rating_val[i].text, rating_sign[rating_typ[i].text])
                     else:
-                            movie[rating_typ[i].text] = rating_val[i].text+' '+rating_sign['defalt']
+                            ratings += '{0} : {1} {2}\n'.format(rating_typ[i].text, rating_val[i].text, rating_sign['defalt'])
 
     div = soup.find('div', class_ = 'OZ8wsd')
     if div != None:
@@ -79,7 +78,8 @@ def movieRating(search):
             div = soup.find('div', class_ = 'a19vA')
             if div != None:
                     val = div.span.text.split(' ')[0]
-                    movie[ky] = val +' '+rating_sign[ky]
+                    ratings += '{0} : {1} {2}\n'.format(ky, val, rating_sign[ky])
+    movie['ratings'] = ratings
 
     #..............Code for fetching overview of the show.........................................               
     div = soup.find('div', class_ = 'kno-rdesc')
@@ -95,7 +95,11 @@ def movieRating(search):
                     for txt in ['elease', 'irector', 'tarring']:
                             if div[i].find('span', class_ = 'w8qArf').get_text().find(txt) > -1:
                                     movie[div[i].find('span', class_ = 'w8qArf').get_text()] = div[i].find('span', class_ = 'LrzXr kno-fv').get_text()
-    return movie      
+    for script in soup('script'):
+        script.decompose()
+    print(soup)
+    return movie
+
 
     #...............Season Details...............
     if catgry == 'Web Show':
@@ -143,8 +147,6 @@ def movieRating(search):
                 reslt += ky + '\n' + season[ky] + '\n\n'
                 
             print(reslt)
-            
-            
 
 
 
