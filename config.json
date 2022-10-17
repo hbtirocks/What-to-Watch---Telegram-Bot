@@ -1,4 +1,35 @@
 {
+   "google":{
+      "header":{
+         "authority":"www.google.com",
+         "method":"GET",
+         "path":"/search?q={0}&sxsrf=ALiCzsYBg6jYo1zJ_kW6s-aV92eLfi6Hxw%3A1665962046954&ei=PpBMY87zOYrx4-EP1u-2gAk&ved=0ahUKEwjOipKg8OX6AhWK-DgGHda3DZAQ4dUDCA4&uact=5&oq=vikings+%28tv+series%29+reviews&gs_lcp=Cgdnd3Mtd2l6EAMyCggAEEcQ1gQQsAMyCggAEEcQ1gQQsAMyCggAEEcQ1gQQsAMyCggAEEcQ1gQQsAMyCggAEEcQ1gQQsAMyCggAEEcQ1gQQsAMyCggAEEcQ1gQQsAMyCggAEEcQ1gQQsAMyDQgAEOQCENYEELADGAEyDQgAEOQCENYEELADGAEyDQgAEOQCENYEELADGAEyDQgAEOQCENYEELADGAEyDQgAEOQCENYEELADGAFKBAhNGAFKBAhBGABKBAhGGAFQAFgAYOE4aAJwAXgAgAEAiAEAkgEAmAEAyAENwAEB2gEGCAEQARgJ&sclient=gws-wiz",
+         "scheme":"https",
+         "accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+         "accept-encoding":"gzip, deflate, br",
+         "accept-language":"en-US,en;q=0.9",
+         "cookie":"SEARCH_SAMESITE=CgQIg5YB; HSID=AmiwlWkVDAF0p2Kxi; SSID=A9r4gDR2I72NakbQF; APISID=x3uXEh7HQIxtpctI/A56hBK7QztkcKwh-r; SAPISID=d0oSpHqXzeDEPIBy/AFMGJjxKSlTtqb0st; __Secure-1PAPISID=d0oSpHqXzeDEPIBy/AFMGJjxKSlTtqb0st; __Secure-3PAPISID=d0oSpHqXzeDEPIBy/AFMGJjxKSlTtqb0st; OGPC=19022519-1:; OGP=-19022519:; OTZ=6713335_34_34__34_; SID=PQiaTtb0aIvfRMtjN1mM3oHb5er2OPn5LZKTRdl5-gq7kTTMMtDJsY9jJhSPbSHY-cENtQ.; __Secure-1PSID=PQiaTtb0aIvfRMtjN1mM3oHb5er2OPn5LZKTRdl5-gq7kTTMSVTSSIOeCHpJDahK-5mvJg.; __Secure-3PSID=PQiaTtb0aIvfRMtjN1mM3oHb5er2OPn5LZKTRdl5-gq7kTTMZ7HDJmXQebkfIVAE0BrhFA.; 1P_JAR=2022-10-16-23; AEC=AakniGM0mbMM5YfaJIHxWngwlESn94dwyOx9mra8axqXQ1ZXGdAHw8QSTgQ; NID=511=CEt3C84PRRAJ-9wFa6A_mlzVpAb7MZEqhYU_IFx1MiKhKHPfDoLc1j6VMVe8J8_GWu25zlFQ24TaMTO6wPpnciW9cTfkCHhtrugltsjSK2138OI8lc4lkJSL0S3Lmq9XZCZPwBp5AjdLfDBFq9Q035SP9hRk6vXktLm09E0hkThQNbFLWG43yM2ceiTRjBreBE1Bx7F6EOTFy4IWzQylVKzKxd-24NDGULIt1tyYjcOEtpj3Q5nEo12PL0JjB3JM_jKvrW5CoOXUY4Kv8iCelweM9XBtWzmkw7ji4skUANlW4zvQFZlqfwpUmskcZPwbZVA; DV=owaPdG-LzXhV8JiFc16AWAa-iDcxPhgtVbcxKQalWAEAANCl4tlOQwFigQAAAOBRX6N8aZALPQAAALwkxYOqKaGkEAAAAA; SIDCC=AEf-XMQvbms7KjX7bxAglzpwejCew9ZariiP7XlCo8eehwOfIgxMM-SrxGtlMw_-KqqW_3pc8A; __Secure-1PSIDCC=AEf-XMRjFjUyenGdj7ruv4gb-TkkLZf_3KgYgXzHzGFswySh-VIZkZ98Y-zh-TvbT4gPVpti6to; __Secure-3PSIDCC=AEf-XMRaUH8Hs1PpFYy_yvfQpe61aiuuZf5z_SWuIaAPgv5ZKAxX7RLYLVprRCOQ4RNVwUlFwQ",
+         "referer":"https://www.google.com/",
+         "sec-ch-ua":"\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"",
+         "sec-ch-ua-arch":"\"\"",
+         "sec-ch-ua-bitness":"\"64\"",
+         "sec-ch-ua-full-version":"\"106.0.5249.119\"",
+         "sec-ch-ua-full-version-list":"\"Chromium\";v=\"106.0.5249.119\", \"Google Chrome\";v=\"106.0.5249.119\", \"Not;A=Brand\";v=\"99.0.0.0\"",
+         "sec-ch-ua-mobile":"?1",
+         "sec-ch-ua-model":"\"Nexus 5\"",
+         "sec-ch-ua-platform":"\"Android\"",
+         "sec-ch-ua-platform-version":"\"6.0\"",
+         "sec-ch-ua-wow64":"?1",
+         "sec-fetch-dest":"document",
+         "sec-fetch-mode":"cors",
+         "sec-fetch-site":"same-origin",
+         "sec-fetch-user":"?1",
+         "upgrade-insecure-requests":"1",
+         "user-agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Mobile Safari/537.36",
+         "x-client-data":"CJe2yQEIorbJAQjEtskBCKmdygEI8uzKAQiSocsBCIe8zAEI2bzMAQjiy8wBCJXZzAEIi93MAQjx38wBCMPhzAEIx+PMAQjD5MwBCODkzAEI/ejMAQ==Decoded:message ClientVariations {// Active client experiment variation IDs.repeated int32 variation_id = [3300119, 3300130, 3300164, 3313321, 3323506, 3330194, 3350023, 3350105, 3352034, 3353749, 3354251, 3354609, 3354819, 3355079, 3355203, 3355232, 3355773];}"
+      },
+      "url":"https://www.google.com"
+   },
    "cinematerial":{
       "header":{
          "authority":"www.cinematerial.com",
@@ -95,5 +126,5 @@
          "search_each":"true"
       }
    },
- "movie_db": ["imdb", "cinematerial", "metacritic"]
+   "movie_db":["imdb","cinematerial","metacritic"]
 }
