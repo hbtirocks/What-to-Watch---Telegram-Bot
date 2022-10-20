@@ -4,18 +4,22 @@ import re
 import time
 import json
 
-def movie_overview(search):
-    #...............Code for generating search url from input.............
-    search = search.strip().replace(' ', '+')
-    url = 'https://www.google.com/search?q=' + search + '&oq=' + search
-    header = {'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Mobile Safari/537.36',
-               'connection' : 'keep-alive'}
-
-    
-    #..............Code for fetching Title.................................
-    req = requests.get(url = url, headers = header)
-    soup = BeautifulSoup(req.content, 'html5lib')
+def movie_overview(qry):
+    #qry:- '0' - 'name', '1' - 'year', '2' - 'category', '3' - 'poster'
     movie = {}
+    header = {'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Mobile Safari/537.36',
+                   'connection' : 'keep-alive'}
+    search = qry[0].strip().replace(' ', '+')
+    search = f'{search}+{qry[1]}'
+    url = qry[3]
+    req = requests.get(url = url, headers = header)
+    movie['poster'] = req.content
+
+    url = 'https://www.google.com/search?q=' + search + '&oq=' + search
+    req = requests.get(url = url, headers = header)
+   
+    #..............Code for fetching Title.................................
+    soup = BeautifulSoup(req.content, 'html5lib')
     title = ''
 
     class_list = ['ssJ7i', 'B5dxMb']
@@ -148,5 +152,8 @@ def movie_overview(search):
                 
             print(reslt)
 
+
+    
+    
 
 

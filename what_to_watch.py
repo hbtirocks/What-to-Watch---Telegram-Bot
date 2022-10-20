@@ -72,20 +72,23 @@ def set_bot():
             #slctd_mv :- selected movie by telegram user.
             
             if len(slctd_mv):
-                re_dict = movie_rating.movie_overview('{0} {1}'.format(slctd_mv[0][0], slctd_mv[0][1]))
+                re_dict = movie_rating.movie_overview(slctd_mv[0])
+                poster = re_dict['poster']
+                del re_dict['poster']
                 reslt = '\n'
-                print(re_dict)
                 for ky in re_dict.keys():
                         if ky == 'ygd' or ky == 'ratings':
                             reslt += '<i>{0}\n</i>'.format(re_dict[ky])
                         else:
                             if ky == 'Title':
-                                re_dict[ky] = '<b>{0}</b>'.format(re_dict[ky])
-                            reslt += '<i>{0} : {1}\n\n</i>'.format(ky, re_dict[ky])
+                                reslt += '<i><b>{0} : {1}\n\n</b></i>'.format(ky, re_dict[ky])
+                            else:
+                                reslt += '<i>{0} : {1}\n\n</i>'.format(ky, re_dict[ky])
                 if len(re_dict) != 0:
                         updater.bot.delete_message(qry.message.chat.id, qry.message.message_id)
                         temp_msg.delete()
-                        qry.message.reply_text(reslt, parse_mode = 'html')
+                        
+                        qry.message.reply_photo(photo = poster, caption = reslt, parse_mode = 'html')
                         db.write_table('movie_info.db', 'chat_info', 'DELETE', where = ['chat_id', 'and', 'message_id'], values = [(qry.message.chat.id, qry.message.message_id)])
                         return 1
                 qry.message.reply_text("Could not find the exact match !\n"+
