@@ -2,6 +2,7 @@
 from telegram.ext.updater import Updater
 from telegram.update import Update
 from telegram.user import User
+from telegram.forcereply import ForceReply
 #from telegram.message import Message
 #from telegram.chat import Chat
 from telegram.ext.callbackcontext import CallbackContext
@@ -15,14 +16,16 @@ import movie_rating
 import suggestions
 from flask import Flask, request, render_template, send_file, send_from_directory
 from flask_ngrok import run_with_ngrok
+from urllib.parse import unquote
 import requests
 import logging
 import json
 import time
 import threading
 import os
-import codecs
+import re
 import manage_db as db
+from url_uploader import download_progress, file_size
 
 logging.basicConfig(level = logging.DEBUG)
 bot_token = "5464528533:AAEdqNZaOwiNUot5-4ng6K1c0-YnuRHelhQ"
@@ -64,7 +67,7 @@ def set_bot():
             db.write_table('movie_info.db', 'chat_info', 'INSERT', values = values)
             
 
-        def keyboard_query(update: Update, context: CallbackContext):
+        def movie_query(update: Update, context: CallbackContext):
             qry = update.callback_query
             temp_msg = qry.message.reply_text("🅵🅴🆃🅲🅷🅸🅽🅶 🅸🅽🅵🅾...ℹ")
             slctd_mv = db.read_table('movie_info.db', 'chat_info', select = ['name', 'year', 'category', 'poster'],
@@ -94,11 +97,96 @@ def set_bot():
                 qry.message.reply_text("Could not find the exact match !\n"+
                                           "Try adding 'movie', 'webseries' etc. in your search..\n"+
                                           "Ex. 'Gravity movie' or 'Vikings webseries' ")
-                
-                
+
+        #..............Code for uploading file from url link to telegram database...........
+        def url_loader(update: Update, context: CallbackContext):
+            reply = update.message.reply_text('<b><i>Processing...</i></b>', parse_mode = 'html', quote = True)
+            url = update.message.text
+            file_name = unquote(url.split('/').pop())
+            #extracting File Name from encoded url
+            txt = '<b>🕹 Choose what you want to do with this file..\n</b>'
+            txt += '<code>File Name : {0}\n'.format(file_name)
+            req = requests.get(url = url, stream = True)
+            size = file_size(int(req.headers['content-length']))
+            txt += 'File Size : {0}\n'.format(size)
+            #.................Finding File Type...................
+            formats = {'video' : 'mp4 mkv 3gp flv wmv mov avi webm', 'audio' : 'pcm wav aiff mp3 aac wma flac alac ogg', 'image' : 'jpeg jpg png gif svg tiff tif bmp webp psd eps ai indd'}
+            #collection of most used video/audio/image formats
+            file_type = 'document'
+            for ky in formats.keys():
+                if formats[ky].find(file_name.split('.').pop().lower()) != -1:
+                    file_type = ky
+                    txt += 'File Type : {0}\n</code>'.format(ky+'/'+file_name.split('.').pop().lower())
+                    break
+            #getting File Type by checking File Name against formats
+            
+
+            #..................Setting Up reply_markup buttons................
+            btns = ('Document', 'Video', 'Audio', 'Image', 'Screenshots', 'Trim', 'Resize', 'Close')
+            emoji = ('📄 ','📹 ', '🔊 ', '🛤 ', '📷 ', '✂️ ', '↔️ ', '✖️ ')
+            #collection of InlineKeyboardButton for all file types
+            slctd = {'document' : '0 7', 'video' : '0 1 4 5 7', 'audio' : '0 2 5 7', 'image' : '0 3 6 7'}
+            #InlineKeyboardButton selection based on file_type
+            blist = slctd[file_type].split(' ')
+            #list of selected buttons
+            optns = [] #buttons to be sent with message_reply
+            for i in range(0, len(blist), 2):
+                optns.append([InlineKeyboardButton(text = emoji[int(blist[i])]+btns[int(blist[i])], callback_data = btns[int(blist[i])])])
+                if i+1 < len(blist):
+                    optns[len(optns)-1].append(InlineKeyboardButton(text = emoji[int(blist[i+1])]+btns[int(blist[i+1])], callback_data = btns[int(blist[i+1])]))
+
+            if req.status_code == 200:
+                reply.edit_text(text = txt, parse_mode = 'html', reply_markup = InlineKeyboardMarkup(optns))        
+            else:
+                reply.edit(text = f"<i><b>Error:</b></i> <code>{req.status_code} {req.reason}</code>", parse_mode = 'html')
+
+            #Updating file_info table
+            db.write_table('url_info.db', 'file_info', 'INSERT', values = [(update.message.chat.id, update.message.message_id, file_name),])
+
+        def url_query(update: Update, context: CallbackContext):
+            qry = update.callback_query
+            if qry.data == 'Close':
+                qry.message.delete()
+            elif qry.data == 'Resize':
+                pass
+            elif qry.data == 'Trim':
+                pass
+            elif qry.data == 'Screenshots':
+                pass
+            else:
+                qry.message.edit_reply_markup(reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton(text = '📄 Default', callback_data = 'Default'), InlineKeyboardButton(text = '✏ Rename', callback_data = 'Rename')]]))
+ 
+        def file_query(update: Update, context: CallbackContext):
+            qry = update.callback_query
+            qry.message.edit_text(text = '<i><b>Trying to download...</b></i>', parse_mode = 'html')
+            if qry.data == 'Default':
+                original_msg = qry.message.reply_to_message
+                url = original_msg.text
+                file_name = unquote(original_msg.text.split('/').pop())
+                req = requests.get(url = url, stream = True)
+                download_progress(req, file_name, original_msg, qry.message)
+            else:
+                original_msg = qry.message.reply_to_message
+                file_name = unquote(original_msg.text.split('/').pop())
+                qry.message.delete()
+                original_msg.reply_text(text = f'<b>File Name: </b><code>{file_name}\n\n</code><i>Send new name for this file...</i>', quote = True, parse_mode = 'html', reply_markup = ForceReply(input_field_placeholder = 'Enter File Name..'))
+
+        def download_after_rename(update: Update, context: CallbackContext):
+            original_msg = update.message.reply_to_message
+            reply = original_msg.reply_text(text = '<i><b>Trying to download...</b></i>', parse_mode = 'html')
+            url = original_msg.text
+            file_name = update.message.text
+            req = requests.get(url = url, stream = True)
+            download_progress(req, file_name, original_msg, reply)
+            
+            
         updater.dispatcher.add_handler(CommandHandler('start', start))
+        updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), url_loader))
+        updater.dispatcher.add_handler(MessageHandler(Filters.reply, download_after_rename))
         updater.dispatcher.add_handler(MessageHandler(Filters.text, get_suggestions))
-        updater.dispatcher.add_handler(CallbackQueryHandler(keyboard_query))
+        updater.dispatcher.add_handler(CallbackQueryHandler(callback = movie_query, pattern = '[1-9]'))
+        updater.dispatcher.add_handler(CallbackQueryHandler(callback = url_query, pattern = 'Doc|Vid|Aud|Ima|Scr|Tri|Res|Clo'))
+        updater.dispatcher.add_handler(CallbackQueryHandler(callback = file_query, pattern = 'Def|Ren'))
     
         https_url = ''
         while https_url == '':
@@ -118,7 +206,7 @@ def set_bot():
             time.sleep(2)
         PORT = int(os.environ.get('PORT', '5000'))
         updater.start_webhook(listen = '0.0.0.0', port = PORT, url_path = bot_token,
-                              webhook_url = https_url+':443/'+bot_token, allowed_updates = ["callback_query", "message"])
+                              webhook_url = https_url+':443/'+bot_token, drop_pending_updates = True, allowed_updates = ["callback_query", "message"])
         #print(updater.bot.getWebhookInfo().to_dict())
     thread = threading.Thread(target = deploy_bot)
     thread.start()
